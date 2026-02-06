@@ -482,6 +482,52 @@ textarea.form-control {
   border-color: var(--line);
 }
 
+.input-group .password-toggle {
+  border-radius: 10px;
+  border-color: var(--line);
+  background: #f7f9fd;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0 0.9rem;
+}
+
+.input-group .password-toggle:hover {
+  background: #eef2fb;
+}
+
+.password-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.4rem 0.75rem;
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: #7d879c;
+}
+
+.password-checklist .check-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.password-checklist .check-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #cbd4e5;
+  box-shadow: inset 0 0 0 2px #cbd4e5;
+}
+
+.password-checklist .check-item.met {
+  color: #1c6f4a;
+}
+
+.password-checklist .check-item.met .check-dot {
+  background: #2fb171;
+  box-shadow: inset 0 0 0 2px #2fb171;
+}
+
 .form-control:focus,
 .form-select:focus,
 .form-check-input:focus,
