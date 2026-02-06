@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Text;
 using AceJobAgency.Data;
 using AceJobAgency.Services;
@@ -15,21 +16,25 @@ public class ForgotPasswordModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IAuditLogger _auditLogger;
+    private readonly IEmailSender _emailSender;
+    private readonly ILogger<ForgotPasswordModel> _logger;
 
     public ForgotPasswordModel(
         UserManager<ApplicationUser> userManager,
-        IAuditLogger auditLogger)
+        IAuditLogger auditLogger,
+        IEmailSender emailSender,
+        ILogger<ForgotPasswordModel> logger)
     {
         _userManager = userManager;
         _auditLogger = auditLogger;
+        _emailSender = emailSender;
+        _logger = logger;
     }
 
     [BindProperty]
     public InputModel Input { get; set; } = new();
 
     public bool RequestSubmitted { get; private set; }
-
-    public string? DemoResetLink { get; private set; }
 
     public class InputModel
     {
@@ -50,7 +55,6 @@ public class ForgotPasswordModel : PageModel
             return Page();
         }
 
-        RequestSubmitted = true;
         var email = Input.Email.Trim();
         var user = await _userManager.FindByEmailAsync(email);
 
@@ -58,15 +62,41 @@ public class ForgotPasswordModel : PageModel
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            DemoResetLink = Url.Page("/Auth/ResetPassword", pageHandler: null, values: new { email, token = encodedToken }, protocol: Request.Scheme);
+            var resetLink = Url.Page("/Auth/ResetPassword", pageHandler: null, values: new { email, token = encodedToken }, protocol: Request.Scheme);
 
-            await _auditLogger.LogAsync("PasswordResetRequested", user.Id, user.Email, "Password reset link generated.");
+            var htmlMessage = BuildResetEmailMessage(email, resetLink ?? string.Empty);
+            try
+            {
+                await _emailSender.SendEmailAsync(email, "Reset your Ace Job Agency password", htmlMessage);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send password reset email.");
+                ModelState.AddModelError(string.Empty, "Unable to send reset email. Please try again later.");
+                return Page();
+            }
+
+            await _auditLogger.LogAsync("PasswordResetRequested", user.Id, user.Email, "Password reset link emailed.");
         }
         else
         {
             await _auditLogger.LogAsync("PasswordResetRequestedUnknownEmail", null, email, "Password reset requested for non-existing email.");
         }
 
+        RequestSubmitted = true;
         return Page();
+    }
+
+    private static string BuildResetEmailMessage(string email, string resetLink)
+    {
+        var safeEmail = WebUtility.HtmlEncode(email);
+        var safeLink = WebUtility.HtmlEncode(resetLink);
+
+        return $"""
+            <p>Hello,</p>
+            <p>A password reset was requested for <strong>{safeEmail}</strong>.</p>
+            <p><a href="{safeLink}">Click here to reset your password</a></p>
+            <p>If you did not request this, you can ignore this email.</p>
+            """;
     }
 }

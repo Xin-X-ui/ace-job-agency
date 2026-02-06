@@ -4,7 +4,9 @@
     ViewData["Title"] = Model.Title;
 }
 
-<h1>@Model.Title</h1>
-<p class="text-muted">Status code: @Model.HttpStatusCode</p>
-<p>@Model.Message</p>
-<a asp-page="/Index" class="btn btn-primary">Back to Home</a>
+<section class="card-shell">
+    <h1>@Model.Title</h1>
+    <p class="muted">Status code: @Model.HttpStatusCode</p>
+    <p>@Model.Message</p>
+    <a asp-page="/Index" class="btn btn-primary">Back to Home</a>
+</section>

@@ -228,6 +228,16 @@ a:hover {
   color: #d6dff7;
 }
 
+.hero-panel ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #d6dff7;
+}
+
+.hero-panel li {
+  margin-bottom: 0.35rem;
+}
+
 .hero-actions {
   margin-top: 1.25rem;
   display: flex;
@@ -488,6 +498,23 @@ textarea.form-control:focus,
   border: 1px solid var(--line);
 }
 
+.auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.auth-card h2 {
+  margin: 0 0 0.35rem;
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.auth-card .muted {
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 992px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -508,6 +535,10 @@ textarea.form-control:focus,
 
   .nav-chip-group {
     margin-top: 0.7rem;
+  }
+
+  .auth-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -4,11 +4,20 @@
     ViewData["Title"] = "Membership Registration";
 }
 
-<h1>Membership Registration</h1>
-<p class="text-muted">Ace Job Agency membership sign-up form.</p>
+<section class="auth-grid">
+    <div class="hero-panel">
+        <p class="kicker">ACE JOB AGENCY</p>
+        <h1>Secure membership onboarding.</h1>
+        <p>Provide your details once. We encrypt sensitive data and monitor every login.</p>
+        <div class="hero-actions">
+            <a class="btn btn-outline-primary" asp-page="/Auth/Login">I already have an account</a>
+        </div>
+    </div>
 
-<div class="row">
-    <div class="col-md-8 col-lg-7">
+    <div class="card-shell auth-card">
+        <h2>Membership Registration</h2>
+        <p class="muted">Complete the form to create your secure profile.</p>
+
         <form method="post" enctype="multipart/form-data" novalidate>
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <input asp-for="Input.RecaptchaToken" type="hidden" />
@@ -81,10 +90,10 @@
                 <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary w-100">Create membership</button>
         </form>
     </div>
-</div>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

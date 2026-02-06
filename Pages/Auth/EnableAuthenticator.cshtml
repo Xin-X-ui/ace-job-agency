@@ -4,69 +4,79 @@
     ViewData["Title"] = "Authenticator App 2FA";
 }
 
-<h1>Authenticator App 2FA</h1>
-
-@if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
-{
-    <div class="alert alert-info" role="alert">@Model.StatusMessage</div>
-}
-
-@if (Model.Is2faEnabled)
-{
-    <div class="alert alert-success" role="alert">
-        Two-factor authentication is currently enabled.
+<section class="auth-grid">
+    <div class="hero-panel">
+        <p class="kicker">SECURITY SETUP</p>
+        <h1>Authenticator App 2FA</h1>
+        <p>Pair your account with Google Authenticator or any TOTP app for stronger protection.</p>
+        <ol class="mt-3">
+            <li>Install a TOTP app on your phone.</li>
+            <li>Scan the QR code or enter the manual key.</li>
+            <li>Verify with the 6-digit code.</li>
+        </ol>
     </div>
-}
-else
-{
-    <div class="alert alert-warning" role="alert">
-        Two-factor authentication is currently disabled.
-    </div>
-}
 
-<ol>
-    <li>Install Google Authenticator (or any TOTP app) on your phone.</li>
-    <li>Add a new account and scan QR code below (or use manual key).</li>
-    <li>Enter the 6-digit code to verify setup.</li>
-</ol>
+    <div class="card-shell auth-card">
+        <h2>Authenticator Setup</h2>
+        <p class="muted">Use the QR code or manual key below.</p>
 
-<div class="row">
-    <div class="col-md-6">
-        <div id="qrCode" class="mb-3"></div>
-        <div class="mb-3">
-            <label class="form-label">Manual setup key</label>
-            <input class="form-control" value="@Model.SharedKey" readonly />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Authenticator URI (debug)</label>
-            <input class="form-control" value="@Model.AuthenticatorUri" readonly />
-        </div>
-    </div>
-    <div class="col-md-6">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="mb-3">
-                <label asp-for="Input.VerificationCode" class="form-label"></label>
-                <input asp-for="Input.VerificationCode" class="form-control" autocomplete="one-time-code" />
-                <span asp-validation-for="Input.VerificationCode" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Verify and Enable</button>
-        </form>
-
-        <hr />
-
-        <form method="post" asp-page-handler="ResetKey" class="mb-2">
-            <button type="submit" class="btn btn-outline-secondary">Reset Authenticator Key</button>
-        </form>
+        @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+        {
+            <div class="alert alert-info" role="alert">@Model.StatusMessage</div>
+        }
 
         @if (Model.Is2faEnabled)
         {
-            <form method="post" asp-page-handler="Disable">
-                <button type="submit" class="btn btn-outline-danger">Disable 2FA</button>
-            </form>
+            <div class="alert alert-success" role="alert">
+                Two-factor authentication is currently enabled.
+            </div>
         }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Two-factor authentication is currently disabled.
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-6">
+                <div id="qrCode" class="mb-3"></div>
+                <div class="mb-3">
+                    <label class="form-label">Manual setup key</label>
+                    <input class="form-control" value="@Model.SharedKey" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Authenticator URI (debug)</label>
+                    <input class="form-control" value="@Model.AuthenticatorUri" readonly />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="mb-3">
+                        <label asp-for="Input.VerificationCode" class="form-label"></label>
+                        <input asp-for="Input.VerificationCode" class="form-control" autocomplete="one-time-code" />
+                        <span asp-validation-for="Input.VerificationCode" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Verify and Enable</button>
+                </form>
+
+                <hr />
+
+                <form method="post" asp-page-handler="ResetKey" class="mb-2">
+                    <button type="submit" class="btn btn-outline-secondary w-100">Reset Authenticator Key</button>
+                </form>
+
+                @if (Model.Is2faEnabled)
+                {
+                    <form method="post" asp-page-handler="Disable">
+                        <button type="submit" class="btn btn-outline-danger w-100">Disable 2FA</button>
+                    </form>
+                }
+            </div>
+        </div>
     </div>
-</div>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

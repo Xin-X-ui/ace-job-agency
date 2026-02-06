@@ -4,15 +4,26 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
+<section class="auth-grid">
+    <div class="hero-panel">
+        <p class="kicker">ACE JOB AGENCY</p>
+        <h1>Welcome back.</h1>
+        <p>Sign in to review your membership profile, security status, and audit trail.</p>
+        <div class="hero-actions">
+            <a class="btn btn-outline-primary" asp-page="/Membership/Register">Create account</a>
+            <a class="btn btn-outline-primary" asp-page="/Auth/ForgotPassword">Reset password</a>
+        </div>
+    </div>
 
-@if (!string.IsNullOrWhiteSpace(Model.NoticeMessage))
-{
-    <div class="alert alert-warning" role="alert">@Model.NoticeMessage</div>
-}
+    <div class="card-shell auth-card">
+        <h2>Login</h2>
+        <p class="muted">Use your registered email and password.</p>
 
-<div class="row">
-    <div class="col-md-6 col-lg-5">
+        @if (!string.IsNullOrWhiteSpace(Model.NoticeMessage))
+        {
+            <div class="alert alert-warning" role="alert">@Model.NoticeMessage</div>
+        }
+
         <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <input asp-for="Input.RecaptchaToken" type="hidden" />
@@ -40,7 +51,7 @@
             </div>
         </form>
     </div>
-</div>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
