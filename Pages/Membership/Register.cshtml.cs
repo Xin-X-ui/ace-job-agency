@@ -202,7 +202,7 @@ public class RegisterModel : PageModel
         if (result.Succeeded)
         {
             await _passwordPolicyService.RecordPasswordHistoryAsync(user);
-            _logger.LogInformation("New member account created for {Email}.", email);
+            _logger.LogInformation("New member account created. UserId: {UserId}", user.Id);
             await _auditLogger.LogAsync("RegistrationSuccess", user.Id, email, "User registration succeeded.");
             await _signInManager.SignInAsync(user, isPersistent: false);
             return RedirectToPage("/Index");
