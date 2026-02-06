@@ -32,9 +32,14 @@ public class SmtpEmailSender : IEmailSender
         };
         message.To.Add(toEmail);
 
+        if (_options.EnableSsl == false)
+        {
+                throw new InvalidOperationException("TLS/SSL must be enabled for SMTP.");
+        }
+
         using var client = new SmtpClient(_options.Host, _options.Port)
         {
-            EnableSsl = _options.EnableSsl
+            EnableSsl = true
         };
 
         if (!string.IsNullOrWhiteSpace(_options.Username))
