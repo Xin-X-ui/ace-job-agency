@@ -1,0 +1,158 @@
+@page
+@model AceJobAgency.Pages.Membership.RegisterModel
+@{
+    ViewData["Title"] = "Membership Registration";
+}
+
+<h1>Membership Registration</h1>
+<p class="text-muted">Ace Job Agency membership sign-up form.</p>
+
+<div class="row">
+    <div class="col-md-8 col-lg-7">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <input asp-for="Input.RecaptchaToken" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="Input.FirstName" class="form-label"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.LastName" class="form-label"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Gender" class="form-label"></label>
+                <select asp-for="Input.Gender" class="form-select">
+                    <option value="">Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Non-Binary">Non-Binary</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+                <span asp-validation-for="Input.Gender" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Nric" class="form-label"></label>
+                <input asp-for="Input.Nric" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Input.Nric" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
+                <div id="password-strength" class="form-text"></div>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.DateOfBirth" class="form-label"></label>
+                <input asp-for="Input.DateOfBirth" class="form-control" type="date" />
+                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Resume" class="form-label"></label>
+                <input asp-for="Input.Resume" class="form-control" type="file" accept=".pdf,.docx" />
+                <div class="form-text">Accepted formats: .pdf, .docx (max 5 MB)</div>
+                <span asp-validation-for="Input.Resume" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.WhoAmI" class="form-label"></label>
+                <textarea asp-for="Input.WhoAmI" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (Model.RecaptchaEnabled)
+    {
+        <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+        <script>
+            (() => {
+                const form = document.querySelector('form[method="post"]');
+                const tokenInput = document.getElementById('Input_RecaptchaToken');
+
+                if (!form || !tokenInput) {
+                    return;
+                }
+
+                form.addEventListener('submit', async (event) => {
+                    if (tokenInput.value) {
+                        return;
+                    }
+
+                    if (typeof grecaptcha === 'undefined') {
+                        event.preventDefault();
+                        return;
+                    }
+
+                    event.preventDefault();
+                    const token = await grecaptcha.execute('@Model.RecaptchaSiteKey', { action: 'register' });
+                    tokenInput.value = token;
+                    form.submit();
+                });
+            })();
+        </script>
+    }
+    <script>
+        (() => {
+            const passwordInput = document.getElementById('Input_Password');
+            const strengthText = document.getElementById('password-strength');
+
+            if (!passwordInput || !strengthText) {
+                return;
+            }
+
+            passwordInput.addEventListener('input', () => {
+                const password = passwordInput.value;
+                let score = 0;
+
+                if (password.length >= 12) score++;
+                if (/[a-z]/.test(password)) score++;
+                if (/[A-Z]/.test(password)) score++;
+                if (/\d/.test(password)) score++;
+                if (/[^A-Za-z\d]/.test(password)) score++;
+
+                if (password.length === 0) {
+                    strengthText.textContent = '';
+                    return;
+                }
+
+                if (score <= 2) {
+                    strengthText.textContent = 'Strength: Weak';
+                    strengthText.className = 'form-text text-danger';
+                } else if (score <= 4) {
+                    strengthText.textContent = 'Strength: Medium';
+                    strengthText.className = 'form-text text-warning';
+                } else {
+                    strengthText.textContent = 'Strength: Strong';
+                    strengthText.className = 'form-text text-success';
+                }
+            });
+        })();
+    </script>
+}

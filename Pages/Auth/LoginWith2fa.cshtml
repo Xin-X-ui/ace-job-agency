@@ -1,0 +1,33 @@
+@page
+@model AceJobAgency.Pages.Auth.LoginWith2faModel
+@{
+    ViewData["Title"] = "Two-Factor Authentication";
+}
+
+<h1>Two-Factor Authentication</h1>
+<p class="text-muted">Enter the 6-digit code from your authenticator app.</p>
+
+<div class="row">
+    <div class="col-md-6 col-lg-5">
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl" asp-route-rememberMe="@Model.RememberMe">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.TwoFactorCode" class="form-label"></label>
+                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="one-time-code" />
+                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" asp-for="Input.RememberMachine" />
+                <label class="form-check-label" asp-for="Input.RememberMachine"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Verify</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

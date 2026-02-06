@@ -1,0 +1,51 @@
+@page
+@model AceJobAgency.Pages.SecurityLogsModel
+@{
+    ViewData["Title"] = "Security Logs";
+}
+
+<section class="logs-card card-shell">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>System Audit Trail</h1>
+        <span class="feed-chip">Live Security Feed</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table activity-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Status</th>
+                    <th>IP Address</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Logs.Count == 0)
+                {
+                    <tr><td colspan="6" class="muted">No security logs found.</td></tr>
+                }
+                else
+                {
+                    @foreach (var row in Model.Logs)
+                    {
+                        <tr>
+                            <td>@row.Timestamp.ToLocalTime().ToString("yyyy-MM-dd, h:mm:ss tt")</td>
+                            <td class="event-name">@row.Action</td>
+                            <td>@row.Entity</td>
+                            <td>
+                                <span class="status-pill @(row.IsSuccess ? "success" : "danger")">
+                                    @(row.IsSuccess ? "SUCCESS" : "FAILURE")
+                                </span>
+                            </td>
+                            <td><span class="mono">@row.IpAddress</span></td>
+                            <td>@row.Message</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

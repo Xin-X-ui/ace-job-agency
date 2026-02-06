@@ -1,0 +1,77 @@
+@page
+@model AceJobAgency.Pages.Auth.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+@if (!string.IsNullOrWhiteSpace(Model.NoticeMessage))
+{
+    <div class="alert alert-warning" role="alert">@Model.NoticeMessage</div>
+}
+
+<div class="row">
+    <div class="col-md-6 col-lg-5">
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <input asp-for="Input.RecaptchaToken" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" asp-for="Input.RememberMe" />
+                <label class="form-check-label" asp-for="Input.RememberMe"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <div class="mt-3">
+                <a asp-page="/Auth/ForgotPassword">Forgot your password?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (Model.RecaptchaEnabled)
+    {
+        <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+        <script>
+            (() => {
+                const form = document.querySelector('form[method="post"]');
+                const tokenInput = document.getElementById('Input_RecaptchaToken');
+
+                if (!form || !tokenInput) {
+                    return;
+                }
+
+                form.addEventListener('submit', async (event) => {
+                    if (tokenInput.value) {
+                        return;
+                    }
+
+                    if (typeof grecaptcha === 'undefined') {
+                        event.preventDefault();
+                        return;
+                    }
+
+                    event.preventDefault();
+                    const token = await grecaptcha.execute('@Model.RecaptchaSiteKey', { action: 'login' });
+                    tokenInput.value = token;
+                    form.submit();
+                });
+            })();
+        </script>
+    }
+}

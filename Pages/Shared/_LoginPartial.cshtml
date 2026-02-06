@@ -1,0 +1,32 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav auth-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item me-2">
+        <span class="auth-status">AUTH: VERIFIED</span>
+    </li>
+    <li class="nav-item me-2">
+        <a class="nav-link action-link" asp-page="/Auth/ChangePassword" title="Change Password">@User.Identity?.Name</a>
+    </li>
+    <li class="nav-item me-2">
+        <a class="nav-link action-link" asp-page="/Auth/EnableAuthenticator" title="Authenticator App">2FA</a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" asp-page="/Auth/Logout" asp-route-returnUrl="@Url.Page("/Auth/Login")">
+            <button type="submit" class="btn logout-btn">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item me-2">
+        <a class="nav-link action-link" asp-page="/Membership/Register">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link action-link" asp-page="/Auth/Login">Login</a>
+    </li>
+}
+</ul>

@@ -1,0 +1,126 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@if (!Model.IsAuthenticated)
+{
+    <section class="hero-panel mb-4">
+        <p class="kicker">ACE JOB AGENCY</p>
+        <h1>Security-first membership onboarding.</h1>
+        <p>Register securely, verify your identity, and track account activity in one place.</p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" asp-page="/Membership/Register">Create Membership</a>
+            <a class="btn btn-outline-primary" asp-page="/Auth/Login">Sign In</a>
+        </div>
+    </section>
+}
+else
+{
+    <section class="dashboard-grid">
+        <article class="profile-card card-shell">
+            <div class="card-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h2>Welcome, @Model.DisplayName!</h2>
+                    <p class="muted">Member account profile</p>
+                </div>
+                <span class="status-pill success">Session Active</span>
+            </div>
+
+            <div class="profile-grid">
+                <div>
+                    <span class="label">Full Name</span>
+                    <p>@Model.DisplayName</p>
+                </div>
+                <div>
+                    <span class="label">Email Address</span>
+                    <p>@Model.Email</p>
+                </div>
+                <div>
+                    <span class="label">Gender</span>
+                    <p>@Model.Gender</p>
+                </div>
+                <div>
+                    <span class="label">NRIC</span>
+                    <p>@Model.MaskedNric <small class="mini-pill">Encrypted at rest</small></p>
+                </div>
+                <div>
+                    <span class="label">Date of Birth</span>
+                    <p>@Model.DateOfBirth.ToString("yyyy-MM-dd")</p>
+                </div>
+                <div>
+                    <span class="label">Resume</span>
+                    <p class="truncate" title="@Model.ResumeName">@Model.ResumeName</p>
+                </div>
+            </div>
+
+            <div class="about-box">
+                <span class="label">About Me</span>
+                <p>@Model.WhoAmI</p>
+            </div>
+        </article>
+
+        <aside class="security-card card-shell">
+            <h3>Security Check</h3>
+            <ul>
+                <li>Data Encryption Active</li>
+                <li>Session Isolation Enabled</li>
+                <li>Authenticator Ready</li>
+                <li>Input Validation Enabled</li>
+            </ul>
+            <div class="security-meta">
+                <span>Last Password Change</span>
+                <strong>@(Model.LastPasswordChangedAtUtc?.ToLocalTime().ToString("yyyy-MM-dd") ?? "Not recorded")</strong>
+            </div>
+            <a class="btn btn-outline-light mt-3" asp-page="/Auth/EnableAuthenticator">Manage 2FA</a>
+        </aside>
+
+        <section class="activity-card card-shell">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3>Recent Security Activities</h3>
+                <a asp-page="/SecurityLogs" class="feed-chip">Live Security Feed</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table activity-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Timestamp</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentActivities.Count == 0)
+                        {
+                            <tr><td colspan="4" class="muted">No activity logs yet.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var row in Model.RecentActivities)
+                            {
+                                <tr>
+                                    <td class="event-name">@row.Action</td>
+                                    <td>@row.Timestamp.ToLocalTime().ToString("yyyy-MM-dd hh:mm tt")</td>
+                                    <td>@row.Message</td>
+                                    <td>
+                                        <span class="status-pill @(row.IsSuccess ? "success" : "danger")">
+                                            @(row.IsSuccess ? "SUCCESS" : "ATTENTION")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="support-card card-shell">
+            <h3>Need Help?</h3>
+            <p>Our support team is available to assist with account and security settings.</p>
+            <a class="btn btn-primary w-100" asp-page="/Auth/ChangePassword">Contact Support</a>
+        </section>
+    </section>
+}
